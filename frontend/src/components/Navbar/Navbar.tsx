@@ -13,7 +13,6 @@ export default function Navbar() {
         { url: "/", label: "Início" },
         { url: "/movies", label: "Filmes" },
         { url: "/series", label: "Séries"  },
-        { url: "/about", label: "Sobre" },
     ]
 
     const pathname = usePathname();
@@ -36,9 +35,11 @@ export default function Navbar() {
                         />
                     ))}
 
-                    <button className={styles.btnAccount}>
-                        <MdAccountCircle />
-                    </button>
+                    <Link href="/profile">
+                        <button className={styles.btnAccount}>
+                            <MdAccountCircle />
+                        </button>
+                    </Link>
                 </ul>
 
             </nav>

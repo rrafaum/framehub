@@ -16,7 +16,6 @@ export default function Footer() {
                     <Link href="/" className={styles.linkItem}>Início</Link>
                     <Link href="/movies" className={styles.linkItem}>Filmes</Link>
                     <Link href="/series" className={styles.linkItem}>Séries</Link>
-                    <Link href="/about" className={styles.linkItem}>Sobre</Link>
                 </div>
             </div>
 

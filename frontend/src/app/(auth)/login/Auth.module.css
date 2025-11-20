@@ -1,0 +1,120 @@
+.mainContainer {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+
+.header {
+    position: absolute;
+    top: 25px;
+    left: 100px;
+    z-index: 10;
+}
+
+.loginBox {
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 50px 68px 40px;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 480px;
+    color: white;
+    min-height: 600px;
+}
+
+.loginBox h2 {
+    padding: 0;
+    font-size: 34px;
+    margin-bottom: 25px;
+}
+
+.inputBox {
+    width: 100%;
+    padding: 15px 20px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    border: 1px solid;
+    background: hsl(0, 0%, 20%, 0.7);
+    color: #666;
+    font-size: 16px;
+}
+
+.inputBox::placeholder {
+    color: #8c8c8c;
+}
+
+
+.submitLogin {
+    width: 100%;
+    padding: 16px;
+    background-color: hsl(217, 92%, 47%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.1s;
+
+    &:hover {
+        background-color: hsl(217, 84%, 41%)
+    }
+}
+
+.loginBox p {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.switchRegister {
+    width: 100%;
+    padding: 16px;
+    background-color: hsl(0, 0%, 30%, 0.7);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.1s;
+
+    &:hover {
+        background-color: hsla(0, 0%, 90%, 0.25);
+        background-color: hsl(0, 0%, 25%, 0.7);
+    }
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.formFade {
+    animation: fadeSlideUp 0.5s ease-out forwards;
+}

@@ -27,7 +27,7 @@
     transition: transform 0.2s ease-in-out;
 }
 
-.active::after,
+.navLink.active::after,
 .navLink:hover::after {
     transition: 0.1s;
     transform: scaleX(1);
