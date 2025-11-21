@@ -41,7 +41,8 @@ export default function Auth() {
 
     try {
       const endpoint = isLogin ? "/login" : "/register";
-      const url = `http://localhost:3333/api/auth/v2${endpoint}`
+      const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
+      const url = `${baseURL}/api/auth/v2${endpoint}`
 
       const payload = isLogin ? { email, password } : { name, email, password };
 
