@@ -2,7 +2,6 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import styles from "./Auth.module.css";
 import Image from "next/image";
@@ -11,7 +10,6 @@ import { MdVisibility, MdVisibilityOff, MdCheckCircle } from "react-icons/md";
 
 export default function Auth() {
 
-  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
   const [name, setName] = useState("");
