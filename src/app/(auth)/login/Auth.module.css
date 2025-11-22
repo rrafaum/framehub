@@ -48,6 +48,7 @@
 .inputBox {
     width: 100%;
     padding: 15px 20px;
+    padding-right: 40px; 
     margin-bottom: 16px;
     border-radius: 4px;
     border: 1px solid;
@@ -182,4 +183,75 @@
 .transitionOverlay.active {
     opacity: 1;
     pointer-events: all;
+}
+
+.inputBox.error {
+    border: 1px solid #ff4b4b;
+    animation: shakes 0.3s ease-in-out;
+}
+
+.errorMessage {
+    color: #ff4b4b;
+    font-size: 12px;
+    margin-top: -12px;
+    margin-bottom: 12px;
+    padding-left: 5px;
+    display: block;
+    text-align: left;
+}
+
+@keyframes shakes {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.passwordWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.eyeButton {
+    position: absolute;
+    right: 10px;
+    top: 35%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #a3a3a3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    z-index: 10;
+}
+
+.eyeButton:hover {
+    color: white;
+}
+
+.successView {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    animation: fadeSlideUp 0.5s ease-out;
+    text-align: center;
+}
+
+.successIcon {
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px rgba(70, 211, 105, 0.4));
+}
+
+.successView h3 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.successView p {
+    color: #a3a3a3;
+    font-size: 16px;
 }

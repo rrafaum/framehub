@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Sora } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 const sora = Sora ({
   subsets: ["latin"],
@@ -20,6 +21,8 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={sora.className}>
+        <Toaster position="top-center" reverseOrder={false}
+        toastOptions={{style: {background: "#333", color: "#fff",}}} />
         {children}
       </body>
     </html>
