@@ -14,6 +14,8 @@ export default function Navbar() {
     const pathname = usePathname();
     const [showMenu, setShowMenu] = useState(false);
 
+    const [isExiting, setIsExiting] = useState(false);
+
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -33,13 +35,21 @@ export default function Navbar() {
     ]
 
     const handleLogout = () => {
-        Cookies.remove("framehub_token");
-        router.push("/login");
-        router.refresh();
+        setShowMenu(false);
+        setIsExiting(true);
+        
+        setTimeout(() => {
+            Cookies.remove("framehub_token");
+            router.push("/login");
+            router.refresh();
+        }, 800);
+        
     }
 
     return (
         <header>
+            <div className={`${styles.transitionOverlay} ${isExiting ? styles.active : ''}`} />
+
             <nav className={styles.navbar}>
                 <Link href="/" className={styles.logo}>
                     <Image src="/framehub-logo.png" width={250} height={100} alt="Logo FrameHub"/>

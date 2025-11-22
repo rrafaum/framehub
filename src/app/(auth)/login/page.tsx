@@ -18,6 +18,8 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [isExiting, setIsExiting] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -60,10 +62,12 @@ export default function Auth() {
 
       if (isLogin) {
         const token = data.data.accessToken || data.data.token;
-
         Cookies.set("framehub_token", token, { expires: 7 });
 
-        router.push("/");
+        setIsExiting(true);
+        setTimeout(() => {
+          router.push("/");
+        }, 800);
 
       } else {
         alert("Conta criada com sucesso! Faça login agora.");
@@ -76,8 +80,11 @@ export default function Auth() {
       } else {
         setError("Ocorreu um erro desconhecido.");
       }
-    } finally {
       setIsLoading(false);
+    } finally {
+      if(!isLogin) {
+        setIsLoading(false);
+      }
     }
   }
 
@@ -136,6 +143,8 @@ export default function Auth() {
 
           </form>
       </div>
+
+      <div className={`${styles.transitionOverlay} ${isExiting ? styles.active : ''}`} />
     </main>
   );
 }
