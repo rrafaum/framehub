@@ -62,3 +62,21 @@
     font-weight: bold;
     margin-left: 5px;
 }
+
+@media (max-width: 768px) {
+    .contentBox {
+        height: auto;
+        padding: 30px 0;
+    }
+
+    .contentLinksContainer {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .githubProject {
+        margin-top: 0;
+    }
+}

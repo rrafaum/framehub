@@ -1,0 +1,92 @@
+.homeContainer {
+    background-color: #141414; 
+    min-height: 100vh;
+    color: white;
+    padding-bottom: 50px;
+    overflow-x: hidden; 
+}
+
+.heroBanner {
+    height: 80vh;
+    background-size: cover;
+    background-position: center top;
+    display: flex;
+    align-items: flex-end;
+    box-shadow: inset 0 -150px 100px -50px #141414;
+    margin-top: -90px; 
+    padding-top: 90px; 
+}
+
+.heroContent {
+    padding: 40px 4%;
+    max-width: 700px;
+    margin-bottom: 60px;
+}
+
+.heroContent h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.heroContent p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #e5e5e5;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.contentWrapper {
+    position: relative;
+    z-index: 2;
+    margin-top: -80px;
+}
+
+.listSection {
+    margin-bottom: 40px;
+    padding-left: 4%;
+}
+
+.sectionTitle {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #e5e5e5;
+    border-left: 4px solid #0a5ee6;
+    padding-left: 10px;
+}
+
+.horizontalList {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px 0; 
+    scroll-behavior: smooth;
+    scrollbar-width: none; 
+    -ms-overflow-style: none;  
+}
+
+.horizontalList::-webkit-scrollbar {
+    display: none;
+}
+
+
+@media (max-width: 768px) {
+    .heroBanner {
+        height: 60vh;
+    }
+    .heroContent h1 {
+        font-size: 2rem;
+    }
+    .heroContent p {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 4;
+        line-clamp: 3;
+    }
+}

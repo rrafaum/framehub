@@ -19,7 +19,7 @@
     width: 225px;
     height: 100%;
     object-fit: cover;
-}
+} 
 
 .navItems {
     display: flex;
@@ -154,4 +154,19 @@
 .transitionOverlay.active {
     opacity: 1;
     pointer-events: all;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 20px;
+        height: 70px;
+    }
+    
+    .navItems li { 
+        display: none; 
+    }
+    
+    .logo img {
+        width: 150px;
+    }
 }

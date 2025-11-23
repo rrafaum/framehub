@@ -1,0 +1,23 @@
+.scrollContainer {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px 0;
+    scroll-behavior: smooth; 
+    cursor: grab;
+    user-select: none;
+    scrollbar-width: none; 
+}
+
+.scrollContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+}
+
+.dragging * {
+    pointer-events: none;
+}

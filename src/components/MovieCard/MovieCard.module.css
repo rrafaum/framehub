@@ -1,0 +1,28 @@
+.cardContainer {
+    display: block;
+    width: 200px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    text-decoration: none;
+    color: white;
+}
+
+.cardContainer:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #333;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.posterImage {
+    object-fit: cover;
+}
