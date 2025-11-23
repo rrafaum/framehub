@@ -4,6 +4,8 @@ import SearchBar from "@/components/SearchBar/SearchBar";
 import styles from "./Page.module.css";
 import HorizontalScroll from "@/components/HorizontalScroll/HorizontalScroll";
 import { MdInfoOutline } from "react-icons/md";
+import Link from "next/link";
+import HomeUserLists from "@/components/HomeUserLists/HomeUserLists";
 
 export default async function Home() {
   
@@ -48,9 +50,9 @@ export default async function Home() {
             <p className={styles.overview}>{featuredDetails ? featuredDetails.overview : featuredMovie.overview}</p>
 
             <div className={styles.heroButtons}>
-                <button className={styles.btnInfo}>
+                <Link href={`/movies/${featuredMovie.id}`} className={styles.btnInfo}>
                     <MdInfoOutline size={28} /> Mais Informações
-                </button>
+                </Link>
             </div>
 
             <div style={{ marginTop: '30px' }}>
@@ -61,6 +63,8 @@ export default async function Home() {
       )}
 
       <div className={styles.contentWrapper}>
+
+        <HomeUserLists />
 
         <section className={styles.listSection}>
           <h2 className={styles.sectionTitle}>Filmes em Alta</h2>

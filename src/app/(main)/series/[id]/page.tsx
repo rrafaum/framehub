@@ -4,6 +4,7 @@ import Image from "next/image";
 import { MdAccessTime, MdCalendarToday } from "react-icons/md";
 import MediaActions from "@/components/MediaActions/MediaActions";
 import CommentSection from "@/components/CommentSection/CommentSection";
+import SearchBar from "@/components/SearchBar/SearchBar";
 
 interface SeriesDetailProps {
   params: Promise<{ id: string }>;
@@ -25,6 +26,16 @@ export default async function SeriesDetailPage({ params }: SeriesDetailProps) {
 
   return (
     <div className={styles.container}>
+
+      <div style={{ 
+          position: 'absolute', 
+          top: '50px',
+          right: '4%', 
+          zIndex: 20, 
+          width: '400px' 
+      }}>
+        <SearchBar />
+      </div>
       
       <div className={styles.backdrop}>
         <Image 

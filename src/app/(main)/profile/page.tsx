@@ -8,6 +8,7 @@ import ProfileHeader from "@/components/ProfileHeader/ProfileHeader";
 import styles from "./Profile.module.css";
 import { useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard/SkeletonCard";
+import SearchBar from "@/components/SearchBar/SearchBar";
 
 interface MediaItem {
   id: number;
@@ -124,6 +125,10 @@ export default function ProfilePage() {
   return (
     <div className={styles.container}>
       
+      <div className={styles.searchWrapper}>
+        <SearchBar />
+      </div>
+
       <ProfileHeader user={user} bannerUrl={bannerImage} />
 
       <div className={styles.contentBody}>
