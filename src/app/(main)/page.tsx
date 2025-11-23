@@ -18,12 +18,11 @@ export default async function Home() {
   const featuredMovie = movies[0];
 
   let featuredDetails = null;
-  
   if (featuredMovie) {
     featuredDetails = await tmdbService.getDetails(featuredMovie.id, 'movie');
   }
 
-  const genres = featuredDetails?.genres?.map((g: { name: string }) => g.name).join(" • ");
+  const genres = featuredDetails?.genres?.map((g: any) => g.name).join(" • ");
 
   return (
     <div className={styles.homeContainer}>
@@ -38,15 +37,15 @@ export default async function Home() {
           <div className={styles.heroContent}>
             <h1>{featuredMovie.title}</h1>
 
-            {featuredDetails && (
-                <div className={styles.heroMeta}>
-                    <span className={styles.match}>{featuredDetails.vote_average?.toFixed(1)} pontos</span>
-                    <span className={styles.genres}>{genres}</span>
-                </div>
-            )}
+            {/* INFO DO FILME (Nota e Gêneros) */}
+            <div className={styles.heroMeta}>
+                <span className={styles.match}>{featuredDetails?.vote_average?.toFixed(1)} pontos</span>
+                <span className={styles.genres}>{genres}</span>
+            </div>
 
             <p className={styles.overview}>{featuredDetails ? featuredDetails.overview : featuredMovie.overview}</p>
 
+            {/* BOTÕES DE AÇÃO */}
             <div className={styles.heroButtons}>
                 <button className={styles.btnPlay}>
                     <MdPlayArrow size={28} /> Assistir
@@ -69,7 +68,7 @@ export default async function Home() {
           <h2 className={styles.sectionTitle}>Filmes em Alta</h2>
           <div className={styles.horizontalList}>
             <HorizontalScroll>
-              {movies.map((movie: { id: number; title?: string; name?: string; poster_path: string; vote_average: number; overview: string }) => (
+              {movies.map((movie: any) => (
                 <MovieCard
                   key={movie.id}
                   id={movie.id}
@@ -88,7 +87,7 @@ export default async function Home() {
           <h2 className={styles.sectionTitle}>Séries Populares</h2>
           <div className={styles.horizontalList}>
             <HorizontalScroll>
-              {series.map((serie: { id: number; title?: string; name?: string; poster_path: string; vote_average: number; overview: string }) => (
+              {series.map((serie: any) => (
                 <MovieCard
                   key={serie.id}
                   id={serie.id}
