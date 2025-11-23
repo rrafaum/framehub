@@ -3,8 +3,7 @@ import { MovieCard } from "@/components/MovieCard/MovieCard";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import styles from "./Page.module.css";
 import HorizontalScroll from "@/components/HorizontalScroll/HorizontalScroll";
-import { MdPlayArrow, MdInfoOutline, MdLocalMovies, MdTv, MdFavorite } from "react-icons/md";
-import Link from "next/link";
+import { MdPlayArrow, MdInfoOutline } from "react-icons/md";
 
 export default async function Home() {
   

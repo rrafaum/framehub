@@ -1,5 +1,6 @@
 import { tmdbService } from "@/services/tmdb";
 import { MovieCard } from "@/components/MovieCard/MovieCard";
+import SearchBar from "@/components/SearchBar/SearchBar";
 import styles from "./Series.module.css";
 
 export default async function SeriesPage() {
@@ -9,6 +10,12 @@ export default async function SeriesPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+
+        <div style={{ marginBottom: '30px', maxWidth: '600px', margin: '-80px auto 30px auto' }}>
+          <SearchBar />
+        </div>
+
+
         <h1>Séries</h1>
         <p>As séries de TV que todo mundo está assistindo.</p>
       </div>

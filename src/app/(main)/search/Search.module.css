@@ -1,0 +1,41 @@
+.container {
+    padding: 120px 4% 50px;
+    min-height: 100vh;
+    background-color: #141414;
+    color: white;
+}
+
+.header {
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.term {
+    color: #e50914; /* Destaque vermelho para o termo buscado */
+}
+
+.noResults {
+    text-align: center;
+    margin-top: 100px;
+    color: #a3a3a3;
+    font-size: 1.2rem;
+}
+
+/* O mesmo grid das outras páginas */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 40px 20px;
+    justify-items: center;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}

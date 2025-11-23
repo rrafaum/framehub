@@ -1,13 +1,21 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MdSearch } from "react-icons/md";
 import styles from "./SearchBar.module.css";
 
-export default function SearchBar() {
-  const [query, setQuery] = useState("");
+function SearchBarContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const urlQuery = searchParams.get("q") || "";
+
+  const [query, setQuery] = useState(urlQuery);
+
+  useEffect(() => {
+    setQuery(urlQuery);
+  }, [urlQuery]); 
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -21,12 +29,20 @@ export default function SearchBar() {
       <MdSearch className={styles.icon} size={24} />
       <input 
         type="text" 
-        placeholder="O que você quer assistir?" 
+        placeholder="Pesquisar filmes ou séries..." 
         className={styles.input}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
       <button type="submit" className={styles.button}>Buscar</button>
     </form>
+  );
+}
+
+export default function SearchBar() {
+  return (
+    <Suspense fallback={<div></div>}>
+      <SearchBarContent />
+    </Suspense>
   );
 }
