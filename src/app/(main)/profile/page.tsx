@@ -121,13 +121,11 @@ export default function ProfilePage() {
 
       <div className={styles.contentBody}>
 
-          {/* SEÇÃO FAVORITOS */}
           <section className={styles.section}>
             <h2 className={styles.title}>Meus Favoritos <span className={styles.count}>({favoritesList.length})</span></h2>
             
             {favoritesList.length > 0 ? (
                 <div className={styles.grid}>
-                    {/* AQUI ESTÁ O MOVIECARD SENDO USADO */}
                     {favoritesList.map((item) => (
                         <MovieCard 
                             key={item.id}
