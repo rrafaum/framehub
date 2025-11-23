@@ -34,7 +34,13 @@ export const tmdbService = {
 
   getTrending: async (type: 'all' | 'movie' | 'tv' = 'all') => {
     return fetchFromTMDB(`/trending/${type}/week`);
-  }
+  },
 
-  
+  getPopular: async (type: 'movie' | 'tv', page: number = 1) => {
+    return fetchFromTMDB(`/${type}/popular`, `&page=${page}`);
+  },
+
+  getTopRated: async (type: 'movie' | 'tv', page: number = 1) => {
+    return fetchFromTMDB(`/${type}/top_rated`, `&page=${page}`);
+  },
 };
