@@ -123,9 +123,21 @@ export default function Auth() {
       if (isLogin) {
         const { accessToken, refreshToken } = data.data;
         
-        Cookies.set("framehub_token", accessToken, { expires: 1, secure: true, sameSite: 'strict' });
+        const isProduction = process.env.NODE_ENV === 'production';
 
-        Cookies.set("framehub_refresh_token", refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+        Cookies.set("framehub_token", accessToken, { 
+          expires: 1, // 1 dia
+          sameSite: 'Lax',
+          secure: isProduction 
+        });
+
+        if (refreshToken) {
+            Cookies.set("framehub_refresh_token", refreshToken, { 
+                expires: 7,
+                sameSite: 'Lax', 
+                secure: isProduction 
+            });
+        }
 
         toast.success("Login realizado com sucesso!");
         setIsExiting(true);

@@ -14,22 +14,17 @@ const refreshSession = async () => {
     const refreshToken = Cookies.get("framehub_refresh_token");
     
     if (!refreshToken) {
-        console.error("❌ Sem refresh token. Logout inevitável.");
         return null;
     }
 
     try {
-        console.log("🔄 Tentando renovar token...");
         const res = await fetch(`${API_URL}/api/auth/v2/refresh`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refreshToken })
         });
 
-        if (!res.ok) {
-            console.error("❌ Falha no refresh endpoint:", res.status);
-            return null;
-        }
+        if (!res.ok) return null;
 
         const data = await res.json();
         const newAccessToken = data.data?.accessToken || data.accessToken || data.token;
@@ -37,12 +32,22 @@ const refreshSession = async () => {
 
         if (!newAccessToken) return null;
 
-        console.log("✅ Token renovado com sucesso!");
+        console.log("✅ Token renovado nos bastidores!");
 
-        Cookies.set("framehub_token", newAccessToken, { expires: 1, secure: true, sameSite: 'strict' });
+        const isProduction = process.env.NODE_ENV === 'production';
+
+        Cookies.set("framehub_token", newAccessToken, { 
+            expires: 1, 
+            sameSite: 'Lax', 
+            secure: isProduction 
+        });
         
         if (newRefreshToken) {
-            Cookies.set("framehub_refresh_token", newRefreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+            Cookies.set("framehub_refresh_token", newRefreshToken, { 
+                expires: 7, 
+                sameSite: 'Lax', 
+                secure: isProduction 
+            });
         }
 
         return newAccessToken;
@@ -113,6 +118,15 @@ export const backendService = {
     if (!res.ok) return [];
     const json = await res.json();
     return Array.isArray(json) ? json : (json.history || json.data || []);
+  },
+
+  removeFromHistory: async (crossoverId: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/history/v2/history`, {
+      method: "DELETE",
+      body: JSON.stringify({ crossoverId }),
+    });
+    if (!res.ok) throw new Error("Erro ao remover do histórico");
+    return res.json();
   },
 
   getMe: async () => {

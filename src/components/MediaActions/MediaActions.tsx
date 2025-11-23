@@ -77,19 +77,21 @@ export default function MediaActions({ id }: MediaActionsProps) {
   };
 
   const handleWatch = async () => {
-    if (isWatched) {
-        toast("Você já assistiu a este título!", { icon: '👀' });
-        return;
-    }
-
     try {
-      setIsWatched(true);
-      await backendService.addToHistory(crossoverId);
-      toast.success("Marcado como assistido!");
+      const previousState = isWatched;
+      setIsWatched(!isWatched);
+
+      if (previousState) {
+        await backendService.removeFromHistory(crossoverId);
+        toast.success("Removido dos assistidos.");
+      } else {
+        await backendService.addToHistory(crossoverId);
+        toast.success("Marcado como assistido!");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao salvar histórico.");
-      setIsWatched(false);
+      toast.error("Erro ao atualizar histórico.");
+      setIsWatched(!isWatched);
     }
   };
 
