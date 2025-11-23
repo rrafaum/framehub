@@ -3,7 +3,8 @@ import { MovieCard } from "@/components/MovieCard/MovieCard";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import styles from "./Page.module.css";
 import HorizontalScroll from "@/components/HorizontalScroll/HorizontalScroll";
-import { MdPlayArrow, MdInfoOutline } from "react-icons/md";
+import { MdPlayArrow, MdInfoOutline, MdLocalMovies, MdTv, MdFavorite } from "react-icons/md";
+import Link from "next/link";
 
 export default async function Home() {
   
@@ -18,11 +19,12 @@ export default async function Home() {
   const featuredMovie = movies[0];
 
   let featuredDetails = null;
+  
   if (featuredMovie) {
     featuredDetails = await tmdbService.getDetails(featuredMovie.id, 'movie');
   }
 
-  const genres = featuredDetails?.genres?.map((g: any) => g.name).join(" • ");
+  const genres = featuredDetails?.genres?.map((g: { name: string }) => g.name).join(" • ");
 
   return (
     <div className={styles.homeContainer}>
@@ -31,21 +33,21 @@ export default async function Home() {
         <div
           className={styles.heroBanner}
           style={{
-            backgroundImage: `linear-gradient(to top, #141414, transparent 90%), url(https://image.tmdb.org/t/p/original${featuredMovie.backdrop_path})`
+            backgroundImage: `linear-gradient(to top, #141414 10%, transparent 90%), url(https://image.tmdb.org/t/p/original${featuredMovie.backdrop_path})`
           }}
         >
           <div className={styles.heroContent}>
             <h1>{featuredMovie.title}</h1>
 
-            {/* INFO DO FILME (Nota e Gêneros) */}
-            <div className={styles.heroMeta}>
-                <span className={styles.match}>{featuredDetails?.vote_average?.toFixed(1)} pontos</span>
-                <span className={styles.genres}>{genres}</span>
-            </div>
+            {featuredDetails && (
+                <div className={styles.heroMeta}>
+                    <span className={styles.match}>{featuredDetails.vote_average?.toFixed(1)} pontos</span>
+                    <span className={styles.genres}>{genres}</span>
+                </div>
+            )}
 
             <p className={styles.overview}>{featuredDetails ? featuredDetails.overview : featuredMovie.overview}</p>
 
-            {/* BOTÕES DE AÇÃO */}
             <div className={styles.heroButtons}>
                 <button className={styles.btnPlay}>
                     <MdPlayArrow size={28} /> Assistir
@@ -63,12 +65,27 @@ export default async function Home() {
       )}
 
       <div className={styles.contentWrapper}>
+
+        <section className={styles.categoriesSection}>
+            <Link href="/movies" className={`${styles.categoryCard} ${styles.purpleCard}`}>
+                <MdLocalMovies size={40} />
+                <span>Todos os Filmes</span>
+            </Link>
+            <Link href="/series" className={`${styles.categoryCard} ${styles.blueCard}`}>
+                <MdTv size={40} />
+                <span>Todas as Séries</span>
+            </Link>
+            <Link href="/profile" className={`${styles.categoryCard} ${styles.redCard}`}>
+                <MdFavorite size={40} />
+                <span>Meus Favoritos</span>
+            </Link>
+        </section>
         
         <section className={styles.listSection}>
           <h2 className={styles.sectionTitle}>Filmes em Alta</h2>
           <div className={styles.horizontalList}>
             <HorizontalScroll>
-              {movies.map((movie: any) => (
+              {movies.map((movie: { id: number; title: string; poster_path: string; vote_average: number; overview: string }) => (
                 <MovieCard
                   key={movie.id}
                   id={movie.id}
@@ -87,7 +104,7 @@ export default async function Home() {
           <h2 className={styles.sectionTitle}>Séries Populares</h2>
           <div className={styles.horizontalList}>
             <HorizontalScroll>
-              {series.map((serie: any) => (
+              {series.map((serie: { id: number; name: string; poster_path: string; vote_average: number; overview: string }) => (
                 <MovieCard
                   key={serie.id}
                   id={serie.id}
