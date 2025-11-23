@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdFavoriteBorder, MdFavorite, MdPlayCircleOutline, MdCheckCircle } from "react-icons/md";
 import styles from "./MediaActions.module.css";
 import { backendService } from "@/services/backend";
@@ -11,49 +11,108 @@ interface MediaActionsProps {
   type: 'movie' | 'tv';
 }
 
+// CORREÇÃO: Criamos um tipo que aceita String, Number ou Objeto
+// Isso substitui o 'any' e acalma o ESLint
+type BackendItem = string | number | {
+  crossoverId?: string | number;
+  id?: string | number;
+  movieId?: string | number;
+};
+
 export default function MediaActions({ id }: MediaActionsProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isWatched, setIsWatched] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const crossoverId = String(id);
 
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        const [favorites, history] = await Promise.all([
+          backendService.getMyFavorites(),
+          backendService.getMyHistory()
+        ]);
+
+        // Função de verificação Tipada
+        const checkId = (list: BackendItem[]) => {
+            return list.some((item: BackendItem) => {
+                // Se for string ou número direto (ex: "123")
+                if (typeof item === 'string' || typeof item === 'number') {
+                    return String(item) === crossoverId;
+                }
+                // Se for objeto, verifica as propriedades possíveis com segurança
+                if (typeof item === 'object' && item !== null) {
+                    return String(item.crossoverId || item.id || item.movieId) === crossoverId;
+                }
+                return false;
+            });
+        };
+
+        setIsFavorited(checkId(favorites));
+        setIsWatched(checkId(history));
+
+      } catch (error) {
+        console.error("Erro ao verificar status:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkStatus();
+  }, [crossoverId]);
+
   const handleFavorite = async () => {
     try {
-      setLoading(true);
-      await backendService.addFavorite(crossoverId);
-      
-      setIsFavorited(true);
-      toast.success("Adicionado aos Favoritos!");
+      const previousState = isFavorited;
+      setIsFavorited(!isFavorited); 
+
+      if (previousState) {
+        await backendService.removeFavorite(crossoverId);
+        toast.success("Removido dos Favoritos.");
+      } else {
+        await backendService.addFavorite(crossoverId);
+        toast.success("Adicionado aos Favoritos!");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao favoritar. Tenta novamente.");
-    } finally {
-      setLoading(false);
+      toast.error("Erro ao atualizar favoritos.");
+      setIsFavorited(!isFavorited);
     }
   };
 
   const handleWatch = async () => {
+    if (isWatched) {
+        toast("Você já assistiu a este título!", { icon: '👀' });
+        return;
+    }
+
     try {
-      setLoading(true);
-      await backendService.addToHistory(crossoverId);
-      
       setIsWatched(true);
-      toast.success("Bom filme! Adicionado ao histórico.");
+      await backendService.addToHistory(crossoverId);
+      toast.success("Marcado como assistido!");
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao registar visualização.");
-    } finally {
-      setLoading(false);
+      toast.error("Erro ao salvar histórico.");
+      setIsWatched(false);
     }
   };
 
+  if (loading) {
+      return (
+        <div className={styles.actions} style={{ opacity: 0.5, pointerEvents: 'none' }}>
+            <button className={styles.btnWatch}><MdPlayCircleOutline size={24} /> Carregando...</button>
+            <button className={styles.btnFavorite}><MdFavoriteBorder size={24} /> ...</button>
+        </div>
+      );
+  }
+
   return (
     <div className={styles.actions}>
+      
       <button 
         className={`${styles.btnWatch} ${isWatched ? styles.watched : ''}`} 
         onClick={handleWatch}
-        disabled={loading}
       >
         {isWatched ? (
             <> <MdCheckCircle size={24} /> Assistido </>
@@ -65,7 +124,6 @@ export default function MediaActions({ id }: MediaActionsProps) {
       <button 
         className={`${styles.btnFavorite} ${isFavorited ? styles.active : ''}`} 
         onClick={handleFavorite}
-        disabled={loading}
       >
         {isFavorited ? (
             <> <MdFavorite size={24} color="#e50914" /> Favorito </>

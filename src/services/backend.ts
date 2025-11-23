@@ -14,44 +14,8 @@ const getHeaders = () => {
 };
 
 export const backendService = {
-  addFavorite: async (crossoverId: string) => {
-    const url = `${API_URL}/api/favorites/v2/favorite`;
-    console.log(`📡 Enviando POST para: ${url}`, { crossoverId });
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({ crossoverId }),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
-      console.error("❌ Erro Backend Favoritos:", res.status, errorData);
-      throw new Error(errorData.message || `Erro ${res.status}: Falha ao favoritar`);
-    }
-    
-    return res.json();
-  },
-
-  addToHistory: async (crossoverId: string) => {
-    const url = `${API_URL}/api/history/v2/history`;
-    console.log(`📡 Enviando POST para: ${url}`, { crossoverId });
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({ crossoverId }),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
-      console.error("❌ Erro Backend Histórico:", res.status, errorData);
-      throw new Error(errorData.message || `Erro ${res.status}: Falha ao adicionar histórico`);
-    }
-
-    return res.json();
-  },
-
+  // COMENTÁRIOS
   getComments: async (crossoverId: string) => {
     const res = await fetch(`${API_URL}/api/comments/v2/comments/${crossoverId}`, {
       method: "GET",
@@ -85,16 +49,6 @@ export const backendService = {
     return res.json();
   },
 
-  getMe: async () => {
-    const res = await fetch(`${API_URL}/api/auth/v2/me`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-    
-    if (!res.ok) return null;
-    return res.json();
-  },
-
   updateComment: async (commentId: string, content: string) => {
     const res = await fetch(`${API_URL}/api/comments/v2/comments/${commentId}`, {
       method: "PUT",
@@ -103,6 +57,18 @@ export const backendService = {
     });
     
     if (!res.ok) throw new Error("Erro ao editar comentário");
+    return res.json();
+  },
+
+
+  // SOCIAL
+  getMe: async () => {
+    const res = await fetch(`${API_URL}/api/auth/v2/me`, {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    
+    if (!res.ok) return null;
     return res.json();
   },
 
@@ -115,4 +81,76 @@ export const backendService = {
     if (!res.ok) return [];
     return res.json();
   },
+
+
+  // FAVORITOS
+  addFavorite: async (crossoverId: string) => {
+    const url = `${API_URL}/api/favorites/v2/favorite`;
+    console.log(`📡 Enviando POST para: ${url}`, { crossoverId });
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ crossoverId }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
+      console.error("❌ Erro Backend Favoritos:", res.status, errorData);
+      throw new Error(errorData.message || `Erro ${res.status}: Falha ao favoritar`);
+    }
+    
+    return res.json();
+  },
+
+  removeFavorite: async (crossoverId: string) => {
+    const res = await fetch(`${API_URL}/api/favorites/v2/favorite`, {
+      method: "DELETE",
+      headers: getHeaders(),
+      body: JSON.stringify({ crossoverId }),
+    });
+    if (!res.ok) throw new Error("Erro ao remover favorito");
+    return res.json();
+  },
+
+  getMyFavorites: async () => {
+    const res = await fetch(`${API_URL}/api/favorites/v2/favorite`, {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return Array.isArray(json) ? json : (json.favorites || json.data || []);
+  },
+
+
+  // HISTÓRICO
+  addToHistory: async (crossoverId: string) => {
+    const url = `${API_URL}/api/history/v2/history`;
+    console.log(`📡 Enviando POST para: ${url}`, { crossoverId });
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ crossoverId }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
+      console.error("❌ Erro Backend Histórico:", res.status, errorData);
+      throw new Error(errorData.message || `Erro ${res.status}: Falha ao adicionar histórico`);
+    }
+
+    return res.json();
+  },
+
+  getMyHistory: async () => {
+    const res = await fetch(`${API_URL}/api/history/v2/history`, {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return Array.isArray(json) ? json : (json.history || json.data || []);
+  }
 };
