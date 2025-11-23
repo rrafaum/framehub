@@ -3,7 +3,6 @@ import { MovieCard } from "@/components/MovieCard/MovieCard";
 import styles from "./Series.module.css";
 
 export default async function SeriesPage() {
-  // AQUI MUDA: getPopular('tv')
   const data = await tmdbService.getPopular('tv');
   const series = data?.results || [];
 
