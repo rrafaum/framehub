@@ -2,28 +2,29 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('framehub_token')?.value;
+  const accessToken = request.cookies.get('framehub_token')?.value;
+  const refreshToken = request.cookies.get('framehub_refresh_token')?.value;
 
   const signInURL = new URL('/login', request.url);
   const dashboardURL = new URL('/', request.url);
-
   const { pathname } = request.nextUrl;
 
-  if (!token) {
-    if (pathname !== '/login' && pathname !== '/register') {
+  const isAuthRoute = pathname === '/login' || pathname === '/register';
+
+  if (!accessToken && !refreshToken) {
+    if (!isAuthRoute) {
       return NextResponse.redirect(signInURL);
     }
   }
 
-  if (token) {
-    if (pathname === '/login' || pathname === '/register') {
+  if (accessToken || refreshToken) {
+    if (isAuthRoute) {
       return NextResponse.redirect(dashboardURL);
     }
   }
 
   return NextResponse.next();
 }
-
 
 export const config = {
   matcher: [

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { MdEdit, MdCheck, MdClose } from "react-icons/md"; // Mantemos os imports
+import { MdEdit, MdCheck, MdClose } from "react-icons/md";
 import styles from "./ProfileHeader.module.css";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { backendService } from "@/services/backend";
 
 interface User {
   id: string;
@@ -15,12 +16,31 @@ interface User {
 
 export default function ProfileHeader({ user, bannerUrl }: { user: User; bannerUrl?: string | null }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const displayName = user.name || "Usuário";
   const [bio, setBio] = useState(user.bio || "Olá, sou novo no FrameHub");
 
-  const handleSave = () => {
-    setIsEditing(false);
-    toast.success("Perfil atualizado!");
+  const handleSave = async () => {
+    if (!user.id) return;
+
+    try {
+      setLoading(true);
+      
+      await backendService.updateUser(user.id, { 
+          name: user.name, // Mantém o nome atual
+          bio: bio         // Atualiza a bio
+      });
+      
+      toast.success("Perfil atualizado!");
+      setIsEditing(false);
+      
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao salvar bio.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,12 +71,13 @@ export default function ProfileHeader({ user, bannerUrl }: { user: User; bannerU
                                 className={styles.bioInput}
                                 maxLength={150}
                                 rows={3}
+                                disabled={loading}
                             />
                             <div className={styles.editButtons}>
-                                <button onClick={handleSave} className={styles.btnSave}>
-                                    <MdCheck /> Salvar
+                                <button onClick={handleSave} className={styles.btnSave} disabled={loading}>
+                                    <MdCheck /> {loading ? "..." : "Salvar"}
                                 </button>
-                                <button onClick={() => setIsEditing(false)} className={styles.btnCancel}>
+                                <button onClick={() => setIsEditing(false)} className={styles.btnCancel} disabled={loading}>
                                     <MdClose /> Cancelar
                                 </button>
                             </div>

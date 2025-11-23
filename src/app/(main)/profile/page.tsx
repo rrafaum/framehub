@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { backendService } from "@/services/backend";
 import { tmdbService } from "@/services/tmdb";
-import { MovieCard } from "@/components/MovieCard/MovieCard"; // Agora será usado
+import { MovieCard } from "@/components/MovieCard/MovieCard";
 import ProfileHeader from "@/components/ProfileHeader/ProfileHeader";
 import styles from "./Profile.module.css";
 import { useRouter } from "next/navigation";
@@ -44,12 +44,17 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const me = await backendService.getMe();
-        if (!me || !me.data) {
+        const meRes = await backendService.getMe();
+        if (!meRes || !meRes.data) {
           router.push("/login"); 
           return;
         }
-        setUser(me.data);
+        const myId = meRes.data.userId;
+
+        const allUsers = await backendService.getAllUsers();
+        const myFullData = allUsers.find((u: User) => u.id === myId);
+
+        setUser(myFullData || { ...meRes.data, id: myId });
 
         const [rawFavs, rawHist] = await Promise.all([
           backendService.getMyFavorites(),
@@ -145,13 +150,11 @@ export default function ProfilePage() {
 
           <hr className={styles.divider} />
 
-          {/* SEÇÃO HISTÓRICO */}
           <section className={styles.section}>
             <h2 className={styles.title}>Assistidos Recentemente <span className={styles.count}>({historyList.length})</span></h2>
             
             {historyList.length > 0 ? (
                 <div className={styles.grid}>
-                    {/* AQUI TAMBÉM */}
                     {historyList.map((item) => (
                         <MovieCard 
                             key={item.id}
