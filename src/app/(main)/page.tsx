@@ -66,21 +66,6 @@ export default async function Home() {
 
       <div className={styles.contentWrapper}>
 
-        <section className={styles.categoriesSection}>
-            <Link href="/movies" className={`${styles.categoryCard} ${styles.purpleCard}`}>
-                <MdLocalMovies size={40} />
-                <span>Todos os Filmes</span>
-            </Link>
-            <Link href="/series" className={`${styles.categoryCard} ${styles.blueCard}`}>
-                <MdTv size={40} />
-                <span>Todas as Séries</span>
-            </Link>
-            <Link href="/profile" className={`${styles.categoryCard} ${styles.redCard}`}>
-                <MdFavorite size={40} />
-                <span>Meus Favoritos</span>
-            </Link>
-        </section>
-        
         <section className={styles.listSection}>
           <h2 className={styles.sectionTitle}>Filmes em Alta</h2>
           <div className={styles.horizontalList}>
