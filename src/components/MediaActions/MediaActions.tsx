@@ -11,8 +11,6 @@ interface MediaActionsProps {
   type: 'movie' | 'tv';
 }
 
-// CORREÇÃO: Criamos um tipo que aceita String, Number ou Objeto
-// Isso substitui o 'any' e acalma o ESLint
 type BackendItem = string | number | {
   crossoverId?: string | number;
   id?: string | number;
@@ -34,14 +32,11 @@ export default function MediaActions({ id }: MediaActionsProps) {
           backendService.getMyHistory()
         ]);
 
-        // Função de verificação Tipada
         const checkId = (list: BackendItem[]) => {
             return list.some((item: BackendItem) => {
-                // Se for string ou número direto (ex: "123")
                 if (typeof item === 'string' || typeof item === 'number') {
                     return String(item) === crossoverId;
                 }
-                // Se for objeto, verifica as propriedades possíveis com segurança
                 if (typeof item === 'object' && item !== null) {
                     return String(item.crossoverId || item.id || item.movieId) === crossoverId;
                 }

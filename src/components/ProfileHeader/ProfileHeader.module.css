@@ -1,0 +1,215 @@
+.profileWrapper {
+    position: relative;
+    margin-bottom: 60px;
+    background-color: #1b2838; /* Fundo azulado Steam */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    /* Removemos border-radius do topo para encostar no banner sem buraco */
+    border-radius: 0 0 12px 12px; 
+    overflow: hidden;
+}
+
+/* Banner Largo */
+.banner {
+    height: 350px; 
+    position: relative;
+    background-color: #141414;
+}
+
+.bannerImage {
+    object-fit: cover;
+    /* Tenta focar no rosto dos personagens (Topo/Centro) */
+    object-position: center 20%; 
+}
+
+/* Se não tiver banner, usa esse gradiente padrão */
+.bannerFallback {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #2c3e50, #4ca1af);
+}
+
+/* O Overlay (Sombra preta subindo) */
+.bannerOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradiente que mescla a imagem com o fundo do perfil */
+    background: linear-gradient(to bottom, transparent 0%, rgba(27, 40, 56, 0.6) 60%, #1b2838 100%);
+}
+
+/* Conteúdo do Perfil (Avatar + Texto) */
+.headerContent {
+    display: flex;
+    gap: 40px;
+    padding: 0 60px 40px; /* Espaço interno */
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    margin-top: -90px; /* Faz o conteúdo subir em cima do banner */
+    align-items: flex-end; /* Alinha o texto com o rodapé do avatar */
+}
+
+/* Avatar Quadrado Arredondado */
+.avatar {
+    width: 180px;
+    height: 180px;
+    background-color: #101214;
+    border: 5px solid #1b2838; /* Borda da cor do fundo para "recortar" */
+    border-radius: 8px; /* Levemente arredondado (Steam Style) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    font-weight: bold;
+    color: #66c0f4; /* Azul Steam */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background-image: linear-gradient(to bottom right, #2a475e, #1b2838);
+    flex-shrink: 0; /* Impede que o avatar amasse */
+}
+
+.infoSection {
+    flex: 1;
+    padding-bottom: 5px; /* Ajuste fino vertical */
+}
+
+.username {
+    font-size: 3rem;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Sombra no texto para ler em cima da imagem */
+    line-height: 1;
+}
+
+/* --- ÁREA DA BIO --- */
+.bioWrapper {
+    max-width: 700px;
+}
+
+.viewBox {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.bio {
+    color: #c7d5e0; /* Cinza azulado claro */
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Botão Editar (Lápis) */
+.btnEdit {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #8f98a0;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    margin-top: 5px;
+}
+
+.btnEdit:hover { 
+    background: rgba(255,255,255,0.1); 
+    color: white;
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* --- MODO EDIÇÃO --- */
+.editBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #101214;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #3e4c5e;
+    margin-top: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.bioInput {
+    background: #222b35;
+    border: 1px solid #3e4c5e;
+    color: #fff;
+    padding: 12px;
+    border-radius: 4px;
+    resize: none; /* Impede arrastar o tamanho */
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.bioInput:focus {
+    outline: none;
+    border-color: #66c0f4;
+}
+
+.editButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.btnSave {
+    background: linear-gradient(to bottom, #66c0f4 5%, #3286b6 95%);
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.btnSave:hover {
+    background: linear-gradient(to bottom, #7bcbf6 5%, #4ea3d3 95%);
+}
+
+.btnCancel {
+    background: transparent;
+    color: #8f98a0;
+    border: 1px solid #8f98a0;
+    padding: 8px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.btnCancel:hover {
+    color: white;
+    border-color: white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .headerContent {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: -90px;
+        padding: 0 20px 40px;
+    }
+    
+    .infoSection { 
+        padding-top: 15px; 
+        width: 100%;
+    }
+    
+    .viewBox { align-items: center; }
+    
+    .username { font-size: 2rem; }
+    
+    .avatar {
+        width: 140px;
+        height: 140px;
+        font-size: 3.5rem;
+        border-width: 4px;
+    }
+}

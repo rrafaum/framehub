@@ -34,7 +34,7 @@ export const MovieCard = ({ id, title, posterPath, type, voteAverage, overview }
           fill 
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className={styles.posterImage} 
-          draggable={false}
+          draggable={false} priority
         />
 
         <div className={styles.hoverOverlay}>

@@ -121,11 +121,18 @@ export default function Auth() {
       }
 
       if (isLogin) {
-        const token = data.data.accessToken || data.data.token;
-        Cookies.set("framehub_token", token, { 
-          expires: 7, 
+        const { accessToken, refreshToken } = data.data;
+        
+        Cookies.set("framehub_token", accessToken, { 
+          expires: 1,
           secure: true,
           sameSite: 'strict'
+        });
+
+        Cookies.set("framehub_refresh_token", refreshToken, { 
+            expires: 7, 
+            secure: true,
+            sameSite: 'strict'
         });
 
         toast.success("Login realizado com sucesso!");

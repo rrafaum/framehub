@@ -4,109 +4,84 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const getHeaders = () => {
   const token = Cookies.get("framehub_token");
-  
-  if (!token) console.warn("⚠️ Atenção: Sem token de autenticação!");
-
   return {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${token}`,
   };
 };
 
-export const backendService = {
+const refreshSession = async () => {
+    const refreshToken = Cookies.get("framehub_refresh_token");
+    if (!refreshToken) return null;
 
-  // COMENTÁRIOS
-  getComments: async (crossoverId: string) => {
-    const res = await fetch(`${API_URL}/api/comments/v2/comments/${crossoverId}`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-    if (!res.ok) return [];
-    return res.json();
-  },
+    try {
+        const res = await fetch(`${API_URL}/api/auth/v2/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken })
+        });
 
-  addComment: async (crossoverId: string, content: string) => {
-    const res = await fetch(`${API_URL}/api/comments/v2/comments`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({ crossoverId, content }),
-    });
-    
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || "Erro ao comentar");
+        if (!res.ok) return null;
+
+        const data = await res.json();
+        const newAccessToken = data.data.accessToken || data.accessToken;
+        const newRefreshToken = data.data.refreshToken || data.refreshToken;
+
+        Cookies.set("framehub_token", newAccessToken, { expires: 1, secure: true, sameSite: 'strict' });
+        
+        if (newRefreshToken) {
+            Cookies.set("framehub_refresh_token", newRefreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+        }
+
+        return newAccessToken;
+    } catch (error) {
+        console.error("Erro ao renovar token:", error);
+        return null;
     }
-    return res.json();
-  },
+};
 
-  deleteComment: async (commentId: string) => {
-    const res = await fetch(`${API_URL}/api/comments/v2/comments/${commentId}`, {
-      method: "DELETE",
-      headers: getHeaders(),
-    });
-    
-    if (!res.ok) throw new Error("Erro ao deletar comentário");
-    return res.json();
-  },
+const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    let res = await fetch(url, { ...options, headers: getHeaders() });
 
-  updateComment: async (commentId: string, content: string) => {
-    const res = await fetch(`${API_URL}/api/comments/v2/comments/${commentId}`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify({ content }),
-    });
-    
-    if (!res.ok) throw new Error("Erro ao editar comentário");
-    return res.json();
-  },
+    if (res.status === 401) {
+        console.log("🔄 Token expirado. Tentando renovar...");
+        
+        const newToken = await refreshSession();
 
+        if (newToken) {
+            console.log("✅ Token renovado! Tentando novamente...");
+            res = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${newToken}`
+                }
+            });
+        } else {
+            console.log("❌ Falha ao renovar. Logout necessário.");
+            Cookies.remove("framehub_token");
+            Cookies.remove("framehub_refresh_token");
+            window.location.href = "/login"; 
+        }
+    }
 
-  // SOCIAL
-  getMe: async () => {
-    const res = await fetch(`${API_URL}/api/auth/v2/me`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-    
-    if (!res.ok) return null;
-    return res.json();
-  },
+    return res;
+};
 
-  getAllUsers: async () => {
-    const res = await fetch(`${API_URL}/api/auth/v2/users`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" }, 
-    });
-    
-    if (!res.ok) return [];
-    return res.json();
-  },
-
-
-  // FAVORITOS
+export const backendService = {
   addFavorite: async (crossoverId: string) => {
-    const url = `${API_URL}/api/favorites/v2/favorite`;
-    console.log(`📡 Enviando POST para: ${url}`, { crossoverId });
-
-    const res = await fetch(url, {
+    const res = await fetchWithAuth(`${API_URL}/api/favorites/v2/favorite`, {
       method: "POST",
-      headers: getHeaders(),
       body: JSON.stringify({ crossoverId }),
     });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
-      console.error("❌ Erro Backend Favoritos:", res.status, errorData);
-      throw new Error(errorData.message || `Erro ${res.status}: Falha ao favoritar`);
-    }
-    
+    if (!res.ok) throw new Error("Erro ao favoritar");
     return res.json();
   },
 
   removeFavorite: async (crossoverId: string) => {
-    const res = await fetch(`${API_URL}/api/favorites/v2/favorite`, {
+    const res = await fetchWithAuth(`${API_URL}/api/favorites/v2/favorite`, {
       method: "DELETE",
-      headers: getHeaders(),
       body: JSON.stringify({ crossoverId }),
     });
     if (!res.ok) throw new Error("Erro ao remover favorito");
@@ -114,43 +89,67 @@ export const backendService = {
   },
 
   getMyFavorites: async () => {
-    const res = await fetch(`${API_URL}/api/favorites/v2/favorite`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
+    const res = await fetchWithAuth(`${API_URL}/api/favorites/v2/favorite`, { method: "GET" });
     if (!res.ok) return [];
     const json = await res.json();
     return Array.isArray(json) ? json : (json.favorites || json.data || []);
   },
 
-
-  // HISTÓRICO
   addToHistory: async (crossoverId: string) => {
-    const url = `${API_URL}/api/history/v2/history`;
-    console.log(`📡 Enviando POST para: ${url}`, { crossoverId });
-
-    const res = await fetch(url, {
+    const res = await fetchWithAuth(`${API_URL}/api/history/v2/history`, {
       method: "POST",
-      headers: getHeaders(),
       body: JSON.stringify({ crossoverId }),
     });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
-      console.error("❌ Erro Backend Histórico:", res.status, errorData);
-      throw new Error(errorData.message || `Erro ${res.status}: Falha ao adicionar histórico`);
-    }
-
+    if (!res.ok) throw new Error("Erro ao adicionar histórico");
     return res.json();
   },
 
   getMyHistory: async () => {
-    const res = await fetch(`${API_URL}/api/history/v2/history`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
+    const res = await fetchWithAuth(`${API_URL}/api/history/v2/history`, { method: "GET" });
     if (!res.ok) return [];
     const json = await res.json();
     return Array.isArray(json) ? json : (json.history || json.data || []);
-  }
+  },
+
+  getMe: async () => {
+    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/me`, { method: "GET" });
+    if (!res.ok) return null;
+    return res.json();
+  },
+
+  getAllUsers: async () => {
+    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/users`, { method: "GET" });
+    if (!res.ok) return [];
+    return res.json();
+  },
+
+  getComments: async (crossoverId: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments/${crossoverId}`, { method: "GET" });
+    if (!res.ok) return [];
+    return res.json();
+  },
+
+  addComment: async (crossoverId: string, content: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments`, {
+      method: "POST",
+      body: JSON.stringify({ crossoverId, content }),
+    });
+    if (!res.ok) throw new Error("Erro ao comentar");
+    return res.json();
+  },
+
+  deleteComment: async (commentId: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments/${commentId}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Erro ao deletar");
+    return res.json();
+  },
+
+  updateComment: async (commentId: string, content: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify({ content }),
+    });
+    if (!res.ok) throw new Error("Erro ao editar comentário");
+    return res.json();
+  },
 };

@@ -52,7 +52,7 @@ export default function Navbar() {
 
             <nav className={styles.navbar}>
                 <Link href="/" className={styles.logo}>
-                    <Image src="/framehub-logo.png" width={250} height={100} alt="Logo FrameHub"/>
+                    <Image src="/framehub-logo.png" width={250} height={100} alt="Logo FrameHub" priority/>
                 </Link>
 
                 <ul className={`${styles.navItems}`}>
@@ -75,7 +75,7 @@ export default function Navbar() {
                             <div className={styles.dropdownMenu}>
                                 <div className={styles.menuHeader}>Minha Conta</div>
 
-                                <Link href="/profile" className={styles.dropdownItem} onClick={() => setShowMenu(false)}><MdPerson size={20} /><span>Perfil</span></Link>
+                                <Link href="/profile" className={styles.dropdownItem} onClick={() => setShowMenu(false)}><MdPerson size={20} /><span>Meu Perfil</span></Link>
 
                                 <div className={styles.separator}></div>
 
