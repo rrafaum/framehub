@@ -84,7 +84,7 @@ export default function ProfileHeader({ user, bannerUrl }: { user: User; bannerU
                         </div>
                     ) : (
                         <div className={styles.viewBox}>
-                            <p className={styles.bio}>&quot;{bio}&quot;</p>
+                            <p className={styles.bio}>{bio}</p>
                             <button onClick={() => setIsEditing(true)} className={styles.btnEdit}>
                                 <MdEdit size={14} /> Editar Bio
                             </button>

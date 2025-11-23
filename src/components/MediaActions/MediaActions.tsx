@@ -112,7 +112,7 @@ export default function MediaActions({ id }: MediaActionsProps) {
         {isWatched ? (
             <> <MdCheckCircle size={24} /> Assistido </>
         ) : (
-            <> <MdPlayCircleOutline size={24} /> Assistir Agora </>
+            <> <MdPlayCircleOutline size={24} /> Assisti </>
         )}
       </button>
 

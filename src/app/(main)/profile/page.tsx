@@ -73,8 +73,10 @@ export default function ProfilePage() {
             }).filter(id => id !== ""); 
         };
 
-        const favIds = normalizeIds(rawFavs);
-        const histIds = normalizeIds(rawHist);
+        const favIds = normalizeIds(rawFavs).reverse();
+        const histIds = normalizeIds(rawHist).reverse();
+
+        console.log("✅ [PROFILE] IDs Invertidos:", favIds);
 
         const fetchDetails = async (ids: string[]) => {
             const uniqueIds = Array.from(new Set(ids));

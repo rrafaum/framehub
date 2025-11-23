@@ -3,7 +3,7 @@ import { MovieCard } from "@/components/MovieCard/MovieCard";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import styles from "./Page.module.css";
 import HorizontalScroll from "@/components/HorizontalScroll/HorizontalScroll";
-import { MdPlayArrow, MdInfoOutline } from "react-icons/md";
+import { MdInfoOutline } from "react-icons/md";
 
 export default async function Home() {
   
@@ -48,9 +48,6 @@ export default async function Home() {
             <p className={styles.overview}>{featuredDetails ? featuredDetails.overview : featuredMovie.overview}</p>
 
             <div className={styles.heroButtons}>
-                <button className={styles.btnPlay}>
-                    <MdPlayArrow size={28} /> Assistir
-                </button>
                 <button className={styles.btnInfo}>
                     <MdInfoOutline size={28} /> Mais Informações
                 </button>
