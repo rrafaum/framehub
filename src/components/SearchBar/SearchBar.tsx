@@ -1,21 +1,42 @@
 "use client";
 
 import { useState, FormEvent, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation"; // Adicionado usePathname
 import { MdSearch } from "react-icons/md";
 import styles from "./SearchBar.module.css";
+import { useDebounce } from "@/hooks/useDebounce";
 
 function SearchBarContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   
-  const urlQuery = searchParams.get("q") || "";
+  const initialQuery = searchParams.get("q") || "";
+  const [query, setQuery] = useState(initialQuery);
 
-  const [query, setQuery] = useState(urlQuery);
+  const debouncedQuery = useDebounce(query, 500);
 
   useEffect(() => {
-    setQuery(urlQuery);
-  }, [urlQuery]); 
+    const urlQuery = searchParams.get("q") || "";
+    if (urlQuery !== query) {
+      setQuery(urlQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]); 
+
+  useEffect(() => {
+    if (pathname === '/search') {
+        const currentUrlQuery = searchParams.get("q") || "";
+        
+        if (debouncedQuery !== currentUrlQuery) {
+            if (debouncedQuery.trim()) {
+                router.replace(`/search?q=${encodeURIComponent(debouncedQuery)}`);
+            } else {
+                router.replace('/search');
+            }
+        }
+    }
+  }, [debouncedQuery, pathname, router, searchParams]);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
