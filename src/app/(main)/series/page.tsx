@@ -14,7 +14,13 @@ export default async function SeriesPage() {
       </div>
 
       <div className={styles.grid}>
-        {series.map((serie: any) => (
+        {series.map((serie: { 
+            id: number; 
+            name: string; 
+            poster_path: string; 
+            vote_average: number; 
+            overview: string 
+        }) => (
           <MovieCard 
             key={serie.id}
             id={serie.id}
