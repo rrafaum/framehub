@@ -43,4 +43,8 @@ export const tmdbService = {
   getTopRated: async (type: 'movie' | 'tv', page: number = 1) => {
     return fetchFromTMDB(`/${type}/top_rated`, `&page=${page}`);
   },
+
+  getDetails: async (id: number, type: 'movie' | 'tv') => {
+    return fetchFromTMDB(`/${type}/${id}`);
+  },
 };
