@@ -96,50 +96,6 @@
     opacity: 0.8;
 }
 
-.actions {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.btnWatch {
-    background-color: #0a5ee6;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 4px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: transform 0.2s;
-}
-
-.btnWatch:hover {
-    transform: scale(1.05);
-    background-color: #1154c0;
-}
-
-.btnFavorite {
-    background-color: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-    padding: 12px 25px;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.2s;
-}
-
-.btnFavorite:hover {
-    background-color: rgba(255,255,255,0.2);
-}
-
 .overviewSection h3 {
     font-size: 1.5rem;
     margin-bottom: 10px;

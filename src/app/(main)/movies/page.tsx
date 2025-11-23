@@ -13,12 +13,14 @@ export default async function MoviesPage() {
       <div className={styles.header}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '20px' }}>
             <div>
+                <div style={{ marginBottom: '30px', maxWidth: '600px', margin: '-80px auto 30px auto' }}>
+                  <SearchBar />
+                </div>
+                
                 <h1>Filmes</h1>
                 <p>Os títulos mais populares do momento.</p>
             </div>
-            <div style={{ maxWidth: '400px' }}>
-                <SearchBar />
-            </div>
+            
         </div>
       </div>
 

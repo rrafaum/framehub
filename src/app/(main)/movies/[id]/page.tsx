@@ -1,7 +1,9 @@
 import { tmdbService } from "@/services/tmdb";
 import styles from "./MovieDetail.module.css";
 import Image from "next/image";
-import { MdFavoriteBorder, MdPlayCircleOutline, MdAccessTime, MdCalendarToday } from "react-icons/md";
+import { MdAccessTime, MdCalendarToday } from "react-icons/md";
+import MediaActions from "@/components/MediaActions/MediaActions";
+import CommentSection from "@/components/CommentSection/CommentSection";
 
 interface MovieDetailProps {
   params: Promise<{ id: string }>;
@@ -59,15 +61,7 @@ export default async function MovieDetailPage({ params }: MovieDetailProps) {
 
             <p className={styles.tagline}>{movie.tagline}</p>
 
-            <div className={styles.actions}>
-                <button className={styles.btnWatch}>
-                    <MdPlayCircleOutline size={24} /> Assistir Agora
-                </button>
-
-                <button className={styles.btnFavorite}>
-                    <MdFavoriteBorder size={24} /> Adicionar aos Favoritos
-                </button>
-            </div>
+            <MediaActions id={movie.id} type="movie" />
 
             <div className={styles.overviewSection}>
                 <h3>Sinopse</h3>
@@ -78,8 +72,7 @@ export default async function MovieDetailPage({ params }: MovieDetailProps) {
       </div>
 
       <div className={styles.commentsSection}>
-        <h2>Comentários</h2>
-        <p>Em breve...</p>
+        <CommentSection movieId={Number(id)} />
       </div>
 
     </div>
