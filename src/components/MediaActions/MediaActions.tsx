@@ -19,7 +19,7 @@ type BackendItem = string | number | {
 
 export default function MediaActions({ id }: MediaActionsProps) {
   const [isFavorited, setIsFavorited] = useState(false);
-  const [isWatched, setIsWatched] = useState(false);
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const crossoverId = String(id);
@@ -27,9 +27,9 @@ export default function MediaActions({ id }: MediaActionsProps) {
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const [favorites, history] = await Promise.all([
+        const [favorites, watchlist] = await Promise.all([
           backendService.getMyFavorites(),
-          backendService.getMyHistory()
+          backendService.getMyWatchlist(),
         ]);
 
         const checkId = (list: BackendItem[]) => {
@@ -45,7 +45,7 @@ export default function MediaActions({ id }: MediaActionsProps) {
         };
 
         setIsFavorited(checkId(favorites));
-        setIsWatched(checkId(history));
+        setIsInWatchlist(checkId(watchlist));
 
       } catch (error) {
         console.error("Erro ao verificar status:", error);
@@ -76,29 +76,29 @@ export default function MediaActions({ id }: MediaActionsProps) {
     }
   };
 
-  const handleWatch = async () => {
+  const handleWatchlist = async () => {
     try {
-      const previousState = isWatched;
-      setIsWatched(!isWatched);
+      const previousState = isInWatchlist;
+      setIsInWatchlist(!isInWatchlist);
 
       if (previousState) {
-        await backendService.removeFromHistory(crossoverId);
-        toast.success("Removido dos assistidos.");
+        await backendService.removeFromWatchlist(crossoverId);
+        toast.success("Removido da sua lista.");
       } else {
-        await backendService.addToHistory(crossoverId);
-        toast.success("Marcado como assistido!");
+        await backendService.addToWatchlist(crossoverId);
+        toast.success("Adicionado à sua lista!");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao atualizar histórico.");
-      setIsWatched(!isWatched);
+      toast.error("Erro ao atualizar lista.");
+      setIsInWatchlist(!isInWatchlist);
     }
   };
 
   if (loading) {
       return (
         <div className={styles.actions} style={{ opacity: 0.5, pointerEvents: 'none' }}>
-            <button className={styles.btnWatch}><MdPlayCircleOutline size={24} /> Carregando...</button>
+            <button className={styles.btnWatch}><MdPlayCircleOutline size={24} /> ...</button>
             <button className={styles.btnFavorite}><MdFavoriteBorder size={24} /> ...</button>
         </div>
       );
@@ -108,13 +108,13 @@ export default function MediaActions({ id }: MediaActionsProps) {
     <div className={styles.actions}>
       
       <button 
-        className={`${styles.btnWatch} ${isWatched ? styles.watched : ''}`} 
-        onClick={handleWatch}
+        className={`${styles.btnWatch} ${isInWatchlist ? styles.watched : ''}`} 
+        onClick={handleWatchlist}
       >
-        {isWatched ? (
-            <> <MdCheckCircle size={24} /> Assistido </>
+        {isInWatchlist ? (
+            <> <MdCheckCircle size={24} /> Assistido </> 
         ) : (
-            <> <MdPlayCircleOutline size={24} /> Assisti </>
+            <> <MdPlayCircleOutline size={24} /> Minha Lista </>
         )}
       </button>
 

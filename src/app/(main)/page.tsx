@@ -5,7 +5,6 @@ import styles from "./Page.module.css";
 import HorizontalScroll from "@/components/HorizontalScroll/HorizontalScroll";
 import { MdInfoOutline } from "react-icons/md";
 import Link from "next/link";
-import HomeUserLists from "@/components/HomeUserLists/HomeUserLists";
 
 export default async function Home() {
   
@@ -63,8 +62,6 @@ export default async function Home() {
       )}
 
       <div className={styles.contentWrapper}>
-
-        <HomeUserLists />
 
         <section className={styles.listSection}>
           <h2 className={styles.sectionTitle}>Filmes em Alta</h2>

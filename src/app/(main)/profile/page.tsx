@@ -57,9 +57,9 @@ export default function ProfilePage() {
 
         setUser(myFullData || { ...meRes.data, id: myId });
 
-        const [rawFavs, rawHist] = await Promise.all([
+        const [rawFavs, rawWatchlist] = await Promise.all([
           backendService.getMyFavorites(),
-          backendService.getMyHistory()
+          backendService.getMyWatchlist()
         ]);
 
         const normalizeIds = (list: unknown): string[] => {
@@ -75,9 +75,9 @@ export default function ProfilePage() {
         };
 
         const favIds = normalizeIds(rawFavs).reverse();
-        const histIds = normalizeIds(rawHist).reverse();
+        const watchIds = normalizeIds(rawWatchlist).reverse();
 
-        console.log("✅ [PROFILE] IDs Invertidos:", favIds);
+        console.log("✅ [PROFILE] IDs Normalizados:", { favIds, watchIds });
 
         const fetchDetails = async (ids: string[]) => {
             const uniqueIds = Array.from(new Set(ids));
@@ -86,13 +86,13 @@ export default function ProfilePage() {
             return results.filter(Boolean) as MediaItem[];
         };
 
-        const [favs, hist] = await Promise.all([
+        const [favs, watchlist] = await Promise.all([
             fetchDetails(favIds),
-            fetchDetails(histIds)
+            fetchDetails(watchIds)
         ]);
 
         setFavoritesList(favs);
-        setHistoryList(hist);
+        setHistoryList(watchlist);
 
       } catch (error) {
         console.error("Erro ao carregar perfil", error);
@@ -107,9 +107,11 @@ export default function ProfilePage() {
   if (loading) {
     return (
         <div className={styles.container}>
-            <div style={{ height: '300px', background: '#222', borderRadius: '12px', marginBottom: '50px', animation: 'pulse 1.5s infinite' }} />
-            <div className={styles.grid}>
-                {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
+            <div style={{ height: '350px', background: '#1b1b1b', borderRadius: '0 0 12px 12px', marginBottom: '50px', animation: 'pulse 1.5s infinite' }} />
+            <div className={styles.contentBody}>
+                <div className={styles.grid}>
+                    {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
+                </div>
             </div>
         </div>
     );
@@ -158,7 +160,7 @@ export default function ProfilePage() {
           <hr className={styles.divider} />
 
           <section className={styles.section}>
-            <h2 className={styles.title}>Assistidos Recentemente <span className={styles.count}>({historyList.length})</span></h2>
+            <h2 className={styles.title}>Assistidos<span className={styles.count}>({historyList.length})</span></h2>
             
             {historyList.length > 0 ? (
                 <div className={styles.grid}>
@@ -175,7 +177,7 @@ export default function ProfilePage() {
                     ))}
                 </div>
             ) : (
-                <p className={styles.empty}>Seu histórico está vazio.</p>
+                <p className={styles.empty}>Sua lista está vazia.</p>
             )}
           </section>
 

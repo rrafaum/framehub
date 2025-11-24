@@ -107,26 +107,32 @@ export const backendService = {
     return Array.isArray(json) ? json : (json.favorites || json.data || []);
   },
 
-  addToHistory: async (crossoverId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/history/v2/history`, { method: "POST", body: JSON.stringify({ crossoverId }) });
-    if (!res.ok) throw new Error("Erro ao adicionar histórico");
+  addToWatchlist: async (crossoverId: string) => {
+    const url = `${API_URL}/api/watchList/v2/watchlist`;
+    const res = await fetchWithAuth(url, {
+      method: "POST",
+      body: JSON.stringify({ crossoverId }),
+    });
+    if (!res.ok) throw new Error("Erro ao adicionar à watchlist");
     return res.json();
   },
 
-  getMyHistory: async () => {
-    const res = await fetchWithAuth(`${API_URL}/api/history/v2/history`, { method: "GET" });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return Array.isArray(json) ? json : (json.history || json.data || []);
-  },
-
-  removeFromHistory: async (crossoverId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/history/v2/history`, {
+  removeFromWatchlist: async (crossoverId: string) => {
+    const url = `${API_URL}/api/watchList/v2/watchlist`;
+    const res = await fetchWithAuth(url, {
       method: "DELETE",
       body: JSON.stringify({ crossoverId }),
     });
-    if (!res.ok) throw new Error("Erro ao remover do histórico");
+    if (!res.ok) throw new Error("Erro ao remover da watchlist");
     return res.json();
+  },
+
+  getMyWatchlist: async () => {
+    const url = `${API_URL}/api/watchList/v2/watchlist`;
+    const res = await fetchWithAuth(url, { method: "GET" });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return Array.isArray(json) ? json : (json.watchlist || json.data || []);
   },
 
   getMe: async () => {
