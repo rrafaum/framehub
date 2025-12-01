@@ -9,6 +9,7 @@ import styles from "./Profile.module.css";
 import { useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard/SkeletonCard";
 import SearchBar from "@/components/SearchBar/SearchBar";
+import FriendsList from "@/components/FriendsList/FriendsList";
 
 interface MediaItem {
   id: number;
@@ -77,8 +78,6 @@ export default function ProfilePage() {
         const favIds = normalizeIds(rawFavs).reverse();
         const watchIds = normalizeIds(rawWatchlist).reverse();
 
-        console.log("✅ [PROFILE] IDs Normalizados:", { favIds, watchIds });
-
         const fetchDetails = async (ids: string[]) => {
             const uniqueIds = Array.from(new Set(ids));
             const promises = uniqueIds.map(id => tmdbService.getMediaById(id));
@@ -107,7 +106,9 @@ export default function ProfilePage() {
   if (loading) {
     return (
         <div className={styles.container}>
-            <div style={{ height: '350px', background: '#1b1b1b', borderRadius: '0 0 12px 12px', marginBottom: '50px', animation: 'pulse 1.5s infinite' }} />
+            <div style={{ height: '350px', background: '#1b1b1b', 
+              borderRadius: '0 0 12px 12px', marginBottom: '50px', 
+              animation: 'pulse 1.5s infinite' }} />
             <div className={styles.contentBody}>
                 <div className={styles.grid}>
                     {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -131,12 +132,16 @@ export default function ProfilePage() {
         <SearchBar />
       </div>
 
-      <ProfileHeader user={user} bannerUrl={bannerImage} />
+      <ProfileHeader user={user} bannerUrl={bannerImage} isOwnProfile={true} />
 
       <div className={styles.contentBody}>
 
+          <FriendsList isOwnProfile={true} />
+
           <section className={styles.section}>
-            <h2 className={styles.title}>Meus Favoritos <span className={styles.count}>({favoritesList.length})</span></h2>
+            <h2 className={styles.title}>Meus Favoritos 
+              <span className={styles.count}>({favoritesList.length})</span>
+            </h2>
             
             {favoritesList.length > 0 ? (
                 <div className={styles.grid}>
@@ -160,7 +165,9 @@ export default function ProfilePage() {
           <hr className={styles.divider} />
 
           <section className={styles.section}>
-            <h2 className={styles.title}>Assistidos<span className={styles.count}>({historyList.length})</span></h2>
+            <h2 className={styles.title}>Assistidos 
+              <span className={styles.count}>({historyList.length})</span>
+            </h2>
             
             {historyList.length > 0 ? (
                 <div className={styles.grid}>

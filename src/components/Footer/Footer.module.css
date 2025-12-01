@@ -4,32 +4,86 @@
     width: 100%;
 }
 
-
 .contentBox {
-    background-color: #18202b;
+    background-color: #0d1117;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    height: 150px;
+    height: 180px;
+    padding: 20px 0;
 }
 
+.githubLinks {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+    margin-top: 10px;
+}
 
-.githubProject {
-    margin-top: 20px;
+.githubFrontend, .githubBackend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.githubFrontend {
+    color: rgba(255, 255, 255, 0.7);
     font-size: 45px;
+}
+
+.githubFrontend:hover {
     color: white;
+    transform: translateY(-3px);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+}
 
-    &:hover {
-        color: hsl(0, 0%, 90%);
-    }
+.githubBackend {
+    font-size: 45px;
+    color: #0d1117;
+    background-color: rgba(255, 255, 255, 0.8); 
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 
-    &:active {
-        color: hsl(0, 0%, 80%);
-    }
+.githubBackend:hover {
+    background-color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+}
+
+.githubBackend .repoLabel{
+    color: #0d1117;
+}
+
+.repoLabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    font-weight: 600;
+    opacity: 0.6;
+    color: white;
+}
+
+.githubFrontend:hover .repoLabel,
+.githubBackend:hover .repoLabel {
+    opacity: 1;
+}
+
+.divider {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
 }
 
 .contentLinksContainer {
+    margin-top: 15px;
     margin-bottom: 10px;
     display: flex;
     gap: 50px;
@@ -37,46 +91,72 @@
 
 .linkItem {
     text-decoration: none;
-    color: hsl(0, 0%, 100%);
+    color: hsl(0, 0%, 80%);
     font-weight: 300;
+    font-size: 14px;
+    position: relative;
+    transition: color 0.2s;
+}
 
-    &:hover {
-        color: hsl(0, 0%, 80%);
-    }
+.linkItem:hover {
+    color: white;
+}
+
+.linkItem::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s;
+}
+
+.linkItem:hover::after {
+    width: 100%;
 }
 
 .copyrightBox {
-    background-color: #0d1117;
-    color: white;
+    background-color: #0b0e13;
+    color: #6e7681;
     height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 200;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.05);
 }
-
 
 .githubDesigned {
     text-decoration: none;
-    color: white;
+    color: #e5e5e5;
     font-weight: bold;
     margin-left: 5px;
+    transition: color 0.2s;
+}
+
+.githubDesigned:hover {
+    color: white;
+    text-decoration: underline;
 }
 
 @media (max-width: 768px) {
     .contentBox {
         height: auto;
-        padding: 30px 0;
+        padding: 40px 0;
+        gap: 20px;
     }
 
     .contentLinksContainer {
         flex-direction: column;
         gap: 15px;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 10px;
     }
     
-    .githubProject {
-        margin-top: 0;
+    .githubLinks {
+        gap: 40px;
     }
 }

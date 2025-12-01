@@ -9,13 +9,21 @@ export default function Footer() {
         <footer className={styles.footerContainer}>
             
             <div className={styles.contentBox}>
-                <Link href="https://github.com/rrafaum/framehub" target="_blank"
-                className={styles.githubProject}><FaGithub /></Link>
+                <div className={styles.githubLinks}>
+                    <Link href="https://github.com/rrafaum/framehub" target="_blank"
+                    className={styles.githubFrontend} title="Repositório Front-End"><FaGithub /> <span className={styles.repoLabel}>Front</span></Link>
+
+                    <div className={styles.divider}></div>
+
+                    <Link href="https://github.com/JorgeBublitz/TrackFlix_API" target="_blank"
+                    className={styles.githubBackend} title="Repositório Back-End"><FaGithub /> <span className={styles.repoLabel}>Back</span></Link>
+                </div>
 
                 <div className={styles.contentLinksContainer}>
                     <Link href="/" className={styles.linkItem}>Início</Link>
                     <Link href="/movies" className={styles.linkItem}>Filmes</Link>
                     <Link href="/series" className={styles.linkItem}>Séries</Link>
+                    <Link href="/community" className={styles.linkItem}>Comunidade</Link>
                 </div>
             </div>
 

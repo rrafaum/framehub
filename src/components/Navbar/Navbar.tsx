@@ -32,6 +32,7 @@ export default function Navbar() {
         { url: "/", label: "Início" },
         { url: "/movies", label: "Filmes" },
         { url: "/series", label: "Séries"  },
+        { url: "/community", label: "Comunidade" },
     ]
 
     const handleLogout = () => {

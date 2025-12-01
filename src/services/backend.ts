@@ -178,4 +178,61 @@ export const backendService = {
     if (!res.ok) throw new Error("Erro ao editar");
     return res.json();
   },
+
+
+  // Social
+  searchUsers: async (query: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/getByName?name=${encodeURIComponent(query)}`, {
+      method: "GET",
+    });
+    if (!res.ok) return [];
+    return res.json();
+  },
+
+  getMyFriends: async () => {
+    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends`, {
+      method: "GET",
+    });
+    
+    if (!res.ok) return [];
+    return res.json(); 
+  },
+
+  followUser: async (friendId: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends/${friendId}`, {
+      method: "POST",
+    });
+    
+    if (!res.ok) throw new Error("Erro ao seguir");
+    return res.json();
+  },
+
+  unfollowUser: async (friendId: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends/${friendId}`, {
+      method: "DELETE",
+    });
+    
+    if (!res.ok) throw new Error("Erro ao deixar de seguir");
+    return res.json();
+  },
+
+  getUserById: async (userId: string) => {
+    try {
+        const allUsers = await fetchWithAuth(`${API_URL}/api/auth/v2/users`, { method: "GET" });
+        if (!allUsers.ok) return null;
+        const usersJson = await allUsers.json();
+        return usersJson.find((u: { id: string }) => u.id === userId) || null;
+    } catch {
+        return null;
+    }
+  },
+
+  getUserFriends: async (userId: string) => {
+    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends/${userId}`, {
+      method: "GET",
+    });
+    
+    if (!res.ok) return []; 
+    return res.json();
+  },
 };
