@@ -5,12 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import NavItem, { NavItemInterface } from "../NavItem/NavItem";
 import styles from "./Navbar.module.css";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { MdAccountCircle, MdPerson, MdLogout } from "react-icons/md";
 import Cookies from "js-cookie";
 
 export default function Navbar() {
-    const router = useRouter();
     const pathname = usePathname();
     const [showMenu, setShowMenu] = useState(false);
 
@@ -40,11 +39,17 @@ export default function Navbar() {
         setIsExiting(true);
         
         setTimeout(() => {
+            const isProduction = process.env.NODE_ENV === 'production';
+            const options = { secure: isProduction, sameSite: 'Lax' as const };
+            
+            Cookies.remove("framehub_token", options);
+            Cookies.remove("framehub_refresh_token", options);
+
             Cookies.remove("framehub_token");
-            router.push("/login");
-            router.refresh();
+            Cookies.remove("framehub_refresh_token");
+            
+            window.location.href = "/login";
         }, 800);
-        
     }
 
     return (
@@ -53,7 +58,13 @@ export default function Navbar() {
 
             <nav className={styles.navbar}>
                 <Link href="/" className={styles.logo}>
-                    <Image src="/framehub-logo.png" width={250} height={100} alt="Logo FrameHub" priority/>
+                    <Image 
+                        src="/framehub-logo.png" 
+                        width={250} 
+                        height={100} 
+                        alt="Logo FrameHub"
+                        priority
+                    />
                 </Link>
 
                 <ul className={`${styles.navItems}`}>
@@ -76,7 +87,7 @@ export default function Navbar() {
                             <div className={styles.dropdownMenu}>
                                 <div className={styles.menuHeader}>Minha Conta</div>
 
-                                <Link href="/profile" className={styles.dropdownItem} onClick={() => setShowMenu(false)}><MdPerson size={20} /><span>Meu Perfil</span></Link>
+                                <Link href="/profile" className={styles.dropdownItem} onClick={() => setShowMenu(false)}><MdPerson size={20} /><span>Perfil</span></Link>
 
                                 <div className={styles.separator}></div>
 
