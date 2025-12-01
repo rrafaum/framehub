@@ -7,7 +7,7 @@
 .title {
     font-size: 1.5rem;
     margin-bottom: 20px;
-    border-left: 4px solid #e50914;
+    border-left: 4px solid #0a5ee6;
     padding-left: 10px;
 }
 
@@ -29,11 +29,11 @@
 
 .input:focus {
     outline: none;
-    border-color: #e50914;
+    border-color: #0a5ee6;
 }
 
 .btnSend {
-    background-color: #e50914;
+    background-color: #0a5ee6;
     border: none;
     color: white;
     padding: 0 20px;
@@ -69,7 +69,6 @@
     position: relative;
 }
 
-/* LINK DO AVATAR */
 .avatarLink {
     text-decoration: none;
     flex-shrink: 0;
@@ -91,7 +90,7 @@
 
 .avatarLink:hover .avatarPlaceholder {
     transform: scale(1.05);
-    border-color: #66c0f4; /* Azul Steam */
+    border-color: #66c0f4;
     color: white;
 }
 
@@ -106,7 +105,6 @@
     margin-bottom: 5px;
 }
 
-/* LINK DO NOME */
 .authorNameLink {
     text-decoration: none;
     font-weight: bold;
@@ -116,7 +114,7 @@
 }
 
 .authorNameLink:hover {
-    color: #66c0f4; /* Azul Steam */
+    color: #66c0f4;
     text-decoration: underline;
 }
 
