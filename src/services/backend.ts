@@ -1,238 +1,178 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const getHeaders = () => {
-  const token = Cookies.get("framehub_token");
-  return {
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
     "Content-Type": "application/json",
-    "Authorization": token ? `Bearer ${token}` : "", 
-  };
-};
+  },
+});
 
-const refreshSession = async () => {
-    const refreshToken = Cookies.get("framehub_refresh_token");
-    
-    if (!refreshToken) {
-        return null;
-    }
+api.interceptors.request.use((config) => {
+  const token = Cookies.get("framehub_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-    try {
-        const res = await fetch(`${API_URL}/api/auth/v2/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken })
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = Cookies.get("framehub_refresh_token");
+        if (!refreshToken) throw new Error("Sem refresh token");
+
+        console.log("🔄 Axios: Tentando renovar token...");
+
+        const { data } = await axios.post(`${API_URL}/api/auth/v2/refresh`, {
+          refreshToken,
         });
 
-        if (!res.ok) return null;
-
-        const data = await res.json();
-        const newAccessToken = data.data?.accessToken || data.accessToken || data.token;
+        const newAccessToken = data.data?.accessToken || data.accessToken;
         const newRefreshToken = data.data?.refreshToken || data.refreshToken;
 
-        if (!newAccessToken) return null;
+        if (newAccessToken) {
+            const isProduction = process.env.NODE_ENV === 'production';
+            Cookies.set("framehub_token", newAccessToken, { expires: 1, sameSite: 'Lax', secure: isProduction });
+            
+            if (newRefreshToken) {
+                Cookies.set("framehub_refresh_token", newRefreshToken, { expires: 7, sameSite: 'Lax', secure: isProduction });
+            }
 
-        console.log("✅ Token renovado nos bastidores!");
-
-        const isProduction = process.env.NODE_ENV === 'production';
-
-        Cookies.set("framehub_token", newAccessToken, { 
-            expires: 1, 
-            sameSite: 'Lax', 
-            secure: isProduction 
-        });
-        
-        if (newRefreshToken) {
-            Cookies.set("framehub_refresh_token", newRefreshToken, { 
-                expires: 7, 
-                sameSite: 'Lax', 
-                secure: isProduction 
-            });
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return api(originalRequest);
         }
-
-        return newAccessToken;
-    } catch (error) {
-        console.error("Erro crítico ao renovar token:", error);
-        return null;
+      } catch (refreshError) {
+        console.error("Sessão expirada.", refreshError);
+        Cookies.remove("framehub_token");
+        Cookies.remove("framehub_refresh_token");
+        window.location.href = "/login";
+      }
     }
-};
-
-const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
-    let res = await fetch(url, { ...options, headers: getHeaders() });
-
-    if (res.status === 401) {
-        const newToken = await refreshSession();
-
-        if (newToken) {
-            res = await fetch(url, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${newToken}`
-                }
-            });
-        } else {
-            console.warn("Sessão expirada definitivamente.");
-            Cookies.remove("framehub_token");
-            Cookies.remove("framehub_refresh_token");
-            window.location.href = "/login";
-        }
-    }
-
-    return res;
-};
+    return Promise.reject(error);
+  }
+);
 
 export const backendService = {
-  
   addFavorite: async (crossoverId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/favorites/v2/favorite`, {
-      method: "POST",
-      body: JSON.stringify({ crossoverId }),
-    });
-    if (!res.ok) throw new Error("Erro ao favoritar");
-    return res.json();
+    const { data } = await api.post("/api/favorites/v2/favorite", { crossoverId });
+    return data;
   },
-  
+
   removeFavorite: async (crossoverId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/favorites/v2/favorite`, { method: "DELETE", body: JSON.stringify({ crossoverId }) });
-    if (!res.ok) throw new Error("Erro ao remover");
-    return res.json();
+    const { data } = await api.delete("/api/favorites/v2/favorite", { data: { crossoverId } });
+    return data;
   },
 
   getMyFavorites: async () => {
-    const res = await fetchWithAuth(`${API_URL}/api/favorites/v2/favorite`, { method: "GET" });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return Array.isArray(json) ? json : (json.favorites || json.data || []);
+    try {
+      const { data } = await api.get("/api/favorites/v2/favorite");
+      return Array.isArray(data) ? data : (data.favorites || data.data || []);
+    } catch { return []; }
   },
 
   addToWatchlist: async (crossoverId: string) => {
-    const url = `${API_URL}/api/watchList/v2/watchlist`;
-    const res = await fetchWithAuth(url, {
-      method: "POST",
-      body: JSON.stringify({ crossoverId }),
-    });
-    if (!res.ok) throw new Error("Erro ao adicionar à watchlist");
-    return res.json();
+    const { data } = await api.post("/api/watchList/v2/watchlist", { crossoverId });
+    return data;
   },
 
   removeFromWatchlist: async (crossoverId: string) => {
-    const url = `${API_URL}/api/watchList/v2/watchlist`;
-    const res = await fetchWithAuth(url, {
-      method: "DELETE",
-      body: JSON.stringify({ crossoverId }),
-    });
-    if (!res.ok) throw new Error("Erro ao remover da watchlist");
-    return res.json();
+    const { data } = await api.delete("/api/watchList/v2/watchlist", { data: { crossoverId } });
+    return data;
   },
 
   getMyWatchlist: async () => {
-    const url = `${API_URL}/api/watchList/v2/watchlist`;
-    const res = await fetchWithAuth(url, { method: "GET" });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return Array.isArray(json) ? json : (json.watchlist || json.data || []);
+    try {
+      const { data } = await api.get("/api/watchList/v2/watchlist");
+      return Array.isArray(data) ? data : (data.watchlist || data.data || []);
+    } catch { return []; }
   },
 
   getMe: async () => {
-    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/me`, { method: "GET", cache: 'no-store' });
-    if (!res.ok) return null;
-    return res.json();
+    try {
+      const { data } = await api.get("/api/auth/v2/me");
+      return data;
+    } catch { return null; }
   },
 
   getAllUsers: async () => {
-    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/users`, { method: "GET", cache: 'no-store' });
-    if (!res.ok) return [];
-    return res.json();
-  },
-
-  updateUser: async (userId: string, data: { bio?: string; name?: string }) => {
-    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/users/${userId}`, { method: "PUT", body: JSON.stringify(data) });
-    if (!res.ok) throw new Error("Erro ao atualizar");
-    return res.json();
-  },
-
-
-  // Comentários
-  getComments: async (crossoverId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments/${crossoverId}`, { method: "GET" });
-    if (!res.ok) return [];
-    return res.json();
-  },
-
-  addComment: async (crossoverId: string, content: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments`, { method: "POST", body: JSON.stringify({ crossoverId, content }) });
-    if (!res.ok) throw new Error("Erro ao comentar");
-    return res.json();
-  },
-
-  deleteComment: async (commentId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments/${commentId}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Erro ao deletar");
-    return res.json();
-  },
-
-  updateComment: async (commentId: string, content: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/comments/v2/comments/${commentId}`, { method: "PUT", body: JSON.stringify({ content }) });
-    if (!res.ok) throw new Error("Erro ao editar");
-    return res.json();
-  },
-
-
-  // Social
-  searchUsers: async (query: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/auth/v2/getByName?name=${encodeURIComponent(query)}`, {
-      method: "GET",
-    });
-    if (!res.ok) return [];
-    return res.json();
-  },
-
-  getMyFriends: async () => {
-    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends`, {
-      method: "GET",
-    });
-    
-    if (!res.ok) return [];
-    return res.json(); 
-  },
-
-  followUser: async (friendId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends/${friendId}`, {
-      method: "POST",
-    });
-    
-    if (!res.ok) throw new Error("Erro ao seguir");
-    return res.json();
-  },
-
-  unfollowUser: async (friendId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends/${friendId}`, {
-      method: "DELETE",
-    });
-    
-    if (!res.ok) throw new Error("Erro ao deixar de seguir");
-    return res.json();
+    try {
+      const { data } = await api.get("/api/auth/v2/users");
+      return data;
+    } catch { return []; }
   },
 
   getUserById: async (userId: string) => {
     try {
-        const allUsers = await fetchWithAuth(`${API_URL}/api/auth/v2/users`, { method: "GET" });
-        if (!allUsers.ok) return null;
-        const usersJson = await allUsers.json();
-        return usersJson.find((u: { id: string }) => u.id === userId) || null;
-    } catch {
-        return null;
-    }
+      const { data } = await api.get("/api/auth/v2/users");
+      // CORREÇÃO: Tipagem aqui para evitar 'any'
+      return data.find((u: { id: string }) => u.id === userId) || null;
+    } catch { return null; }
+  },
+
+  updateUser: async (userId: string, userData: { bio?: string; name?: string }) => {
+    const { data } = await api.put(`/api/auth/v2/users/${userId}`, userData);
+    return data;
+  },
+
+  searchUsers: async (query: string) => {
+    try {
+        const { data } = await api.get(`/api/auth/v2/getByName?name=${encodeURIComponent(query)}`);
+        return data;
+    } catch { return []; }
+  },
+
+  getMyFriends: async () => {
+    try {
+        const { data } = await api.get("/api/friends/v2/friends");
+        return data;
+    } catch { return []; }
   },
 
   getUserFriends: async (userId: string) => {
-    const res = await fetchWithAuth(`${API_URL}/api/friends/v2/friends/${userId}`, {
-      method: "GET",
-    });
-    
-    if (!res.ok) return []; 
-    return res.json();
+    try {
+        const { data } = await api.get(`/api/friends/v2/list/${userId}`);
+        return data;
+    } catch { return []; }
   },
+
+  followUser: async (friendId: string) => {
+    const { data } = await api.post(`/api/friends/v2/friends/${friendId}`);
+    return data;
+  },
+
+  unfollowUser: async (friendId: string) => {
+    const { data } = await api.delete(`/api/friends/v2/friends/${friendId}`);
+    return data;
+  },
+
+  getComments: async (crossoverId: string) => {
+    try {
+        const { data } = await api.get(`/api/comments/v2/comments/${crossoverId}`);
+        return data;
+    } catch { return []; }
+  },
+
+  addComment: async (crossoverId: string, content: string) => {
+    const { data } = await api.post("/api/comments/v2/comments", { crossoverId, content });
+    return data;
+  },
+
+  deleteComment: async (commentId: string) => {
+    const { data } = await api.delete(`/api/comments/v2/comments/${commentId}`);
+    return data;
+  },
+
+  updateComment: async (commentId: string, content: string) => {
+    const { data } = await api.put(`/api/comments/v2/comments/${commentId}`, { content });
+    return data;
+  }
 };
