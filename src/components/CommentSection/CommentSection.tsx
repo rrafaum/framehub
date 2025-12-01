@@ -5,17 +5,15 @@ import { MdDeleteOutline, MdSend, MdEdit, MdClose, MdCheck } from "react-icons/m
 import { backendService } from "@/services/backend";
 import toast from "react-hot-toast";
 import styles from "./CommentSection.module.css";
+import Link from "next/link";
 
 interface Comment {
   id: string;
   content: string;
   userId: string;
+  user?: { name: string };
+  User?: { name: string };
   createdAt: string;
-}
-
-interface User {
-  id: string;
-  name: string;
 }
 
 interface CommentSectionProps {
@@ -44,7 +42,7 @@ export default function CommentSection({ movieId }: CommentSectionProps) {
         const allUsers = await backendService.getAllUsers();
         if (Array.isArray(allUsers)) {
           const map: { [key: string]: string } = {};
-          allUsers.forEach((u: User) => {
+          allUsers.forEach((u: { id: string; name: string }) => {
             map[u.id] = u.name;
           });
           setUsersMap(map);
@@ -163,16 +161,19 @@ export default function CommentSection({ movieId }: CommentSectionProps) {
         {comments.map((comment) => (
           <div key={comment.id} className={styles.commentCard}>
             
-            <div className={styles.avatarPlaceholder}>
-                {getAuthorName(comment.userId).charAt(0).toUpperCase()}
-            </div>
+            <Link href={`/users/${comment.userId}`} className={styles.avatarLink}>
+                <div className={styles.avatarPlaceholder}>
+                    {getAuthorName(comment.userId).charAt(0).toUpperCase()}
+                </div>
+            </Link>
             
             <div className={styles.commentContent}>
                 <div className={styles.commentHeader}>
-                    <span className={styles.userName}>{getAuthorName(comment.userId)}</span>
-                    
+                    <Link href={`/users/${comment.userId}`} className={styles.authorNameLink}>
+                        {getAuthorName(comment.userId)}
+                    </Link>
+
                     <div className={styles.headerRight}>
-                      
                         {currentUserId === comment.userId && !editingCommentId && (
                             <div className={styles.ownerActions}>
                                 <button onClick={() => startEditing(comment)} className={styles.btnAction} title="Editar">
@@ -185,13 +186,12 @@ export default function CommentSection({ movieId }: CommentSectionProps) {
                         )}
 
                         <span className={styles.date}>
-                          {(() => {
-                            const d = new Date(comment.createdAt);
-                            const dateStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
-                            const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                            
-                            return `${dateStr} às ${timeStr}`;
-                          })()}
+                            {(() => {
+                                const d = new Date(comment.createdAt);
+                                const dateStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                                const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                return `${dateStr} às ${timeStr}`;
+                            })()}
                         </span>
                     </div>
                 </div>
@@ -218,7 +218,7 @@ export default function CommentSection({ movieId }: CommentSectionProps) {
                     <p className={styles.text}>{comment.content}</p>
                 )}
             </div>
-
+            
           </div>
         ))}
       </div>
