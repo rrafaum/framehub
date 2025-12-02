@@ -27,7 +27,7 @@ export default function FriendsList({ userId, isOwnProfile = false }: FriendsLis
         if (isOwnProfile) {
             friendIds = await backendService.getMyFriends();
         } else if (userId) {
-            friendIds = await backendService.getUserFriends(userId);
+            friendIds = await backendService.getPublicFriends(userId);
         }
 
         if (!Array.isArray(friendIds) || friendIds.length === 0) {

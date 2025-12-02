@@ -62,6 +62,7 @@ api.interceptors.response.use(
 );
 
 export const backendService = {
+  // ... (Mantenha todas as funções anteriores: addFavorite, getMe, etc.) ...
   addFavorite: async (crossoverId: string) => {
     const { data } = await api.post("/api/favorites/v2/favorite", { crossoverId });
     return data;
@@ -113,7 +114,6 @@ export const backendService = {
   getUserById: async (userId: string) => {
     try {
       const { data } = await api.get("/api/auth/v2/users");
-      // CORREÇÃO: Tipagem aqui para evitar 'any'
       return data.find((u: { id: string }) => u.id === userId) || null;
     } catch { return null; }
   },
@@ -174,5 +174,34 @@ export const backendService = {
   updateComment: async (commentId: string, content: string) => {
     const { data } = await api.put(`/api/comments/v2/comments/${commentId}`, { content });
     return data;
+  },
+
+  
+  getPublicFavorites: async (userId: string) => {
+    try {
+      const { data } = await api.get("/api/favorites/v2/publicFavorite", { params: { userId } });
+      return Array.isArray(data) ? data : (data.favorites || data.data || []);
+    } catch { return []; }
+  },
+
+  getPublicWatchlist: async (userId: string) => {
+    try {
+      const { data } = await api.get("/api/watchList/v2/publicWatchlist", { params: { userId } });
+      return Array.isArray(data) ? data : (data.watchlist || data.data || []);
+    } catch { return []; }
+  },
+
+  getPublicHistory: async (userId: string) => {
+    try {
+      const { data } = await api.get("/api/history/v2/publicHistory", { params: { userId } });
+      return Array.isArray(data) ? data : (data.history || data.data || []);
+    } catch { return []; }
+  },
+
+  getPublicFriends: async (userId: string) => {
+    try {
+      const { data } = await api.get("/api/friends/v2/publicFriends", { params: { userId } });
+      return Array.isArray(data) ? data : [];
+    } catch { return []; }
   }
 };
